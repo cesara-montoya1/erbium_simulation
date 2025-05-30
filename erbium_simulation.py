@@ -9,6 +9,7 @@ import matplotlib.patches as patches
 # SIMULACIÓN AVANZADA DE IONES DE ERBIO (Er³⁺) - MODELO DE 3 NIVELES
 # =============================================================================
 
+max_intensity = 0
 
 class ErbiumSimulator:
     """
@@ -304,10 +305,14 @@ class ErbiumSimulator:
             # Actualizar espectro
             ax4.clear()
             wavelengths, spectrum = self.generate_emission_spectrum(N1[frame])
-            ax4.semilogy(wavelengths, spectrum, "r-", linewidth=2)
+
+            global max_intensity
+            max_intensity = max(max_intensity, spectrum.max())
+
+            ax4.plot(wavelengths, spectrum, "r-", linewidth=2)
             ax4.fill_between(wavelengths, spectrum, alpha=0.3, color="red")
             ax4.set_xlim(1450, 1610)
-            ax4.set_ylim(0, 24)
+            ax4.set_ylim(0, max_intensity)
             ax4.set_xlabel("Longitud de onda [nm]")
             ax4.set_ylabel("Intensidad [fotones/(s × nm)]")
             ax4.set_title("Espectro de Emisión")
@@ -359,7 +364,7 @@ def main():
     # Crear simulador con parámetros realistas
     simulator = ErbiumSimulator(
         N0=1e24,
-        P_pump=10e-3,
+        P_pump=50e-3,
         tau21=1e-6,
         tau10=10e-3,
     )
